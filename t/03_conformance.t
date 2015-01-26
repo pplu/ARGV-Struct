@@ -19,6 +19,13 @@ my @tests = (
  { argv => [ qw/[ A B ] /],
    struct => [ 'A', 'B' ],
  }, 
+ { argv => [ qw/[ [ 1 2 3 ] [ 4 5 6 ] [ 7 8 9 ] ]/],
+   struct => [ [1,2,3],[4,5,6],[7,8,9]],
+ }, 
+ { argv => [ qw/[ { Name=X } { Name=Y } ]/],
+   struct => [ { Name => 'X' }, { Name => 'Y' } ],
+ }, 
+
  { argv => [ '{', 'X= Y ', '}' ],
    struct => { X => ' Y ' },
  },
@@ -28,11 +35,16 @@ my @tests = (
 );
 
 foreach $test (@tests) {
-  is_deeply(
-    ARGV::Struct->new(argv => $test->{ argv })->parse,
-    $test->{ struct },
-    "Conformance of " . join ' ', @{ $test->{ argv } }
-  );
+  eval {
+    is_deeply(
+      ARGV::Struct->new(argv => $test->{ argv })->parse,
+      $test->{ struct },
+      "Conformance of " . join ' ', @{ $test->{ argv } }
+    );
+  };
+  if ($@){
+    fail((join ' ', @{ $test->{ argv } }) . " DIED $@");
+  }
 }
 
 done_testing;

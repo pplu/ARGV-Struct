@@ -24,14 +24,28 @@ package ARGV::Struct {
     my ($self, @args) = @_;
     my $context;
     my $actual_struct;
-    
+
+    my $token = shift @args;
+    if ($token eq '[') {
+      $actual_struct = [];
+      $context = 'list';
+    } elsif($token eq '{') {
+      $actual_struct = {};
+      $context = 'hash';
+    }
+
     while (my $token = shift @args) {
+#use Data::Dumper;
+#print Dumper(\@args, $actual_struct);
       if ($token eq '[') {
-        $actual_struct = [];
-        $context = 'list';
+        # A new struct is coming!
+        my $substruct = $self->_parse_argv($token, @args);
+        push @$actual_struct, $substruct->{ struct };
+        @args = @{ $substruct->{ leftover } };
       } elsif($token eq '{') {
-        $actual_struct = {};
-        $context = 'hash';
+        my $substruct = $self->_parse_argv($token, @args);
+        push @$actual_struct, $substruct->{ struct };
+        @args = @{ $substruct->{ leftover } };
       } elsif ($token eq ']') {
         return { struct => $actual_struct, leftover => [ @args ] };
       } elsif ($token eq '}') {
