@@ -22,17 +22,19 @@ get complex.
 
 # THE PAIN
 
-I've had the "privilege" of finding some 
+I've had to use some command-line utilities that had to do creative stuff to transmit
+deeply nested arguments, or datastructure-like information. Here are some strategies that
+I've found over time: 
 
 ## Complex arguments codified as JSON
 
-JSON is horrible for the command line having to escape quotes, is a nightmare. It's a pain.
+JSON is horrible for the command line because you have to escape the quotes. It's a nightmare.
 
     command --complex_arg "{\"key1\":\"value1\",\"key2\":\"value2\"}"
 
 ## Arguments encoded via some custom scheme
 
-These schemes fail when you have to make values complex (lists, or other key/values(
+These schemes fail when you have to make values complex (lists, or other key/values)
 
     command --complex_arg key1,value1:key2,value2
 
@@ -101,8 +103,9 @@ return the parsed data structure
 
 This module is quite experimental. I developed it while developing Paws (a 
 Perl AWS SDK). It has a commandline utility that needs to recollect all the
-Attributes and Values for method calls. Since Getopt was ugly as hell, I 
-decided that it would be better to do things in a different way, and eventually
+Attributes and Values for method calls, and lots of times, they get complex. 
+Since trying to pass params with Getopt was getting ugly as hell, I decided 
+that it would be better to do things in a different way, and eventually
 thought it could be an independent module.
 
 I'm publishing this module to get the idea out to the public so it can be worked
@@ -112,11 +115,28 @@ Please bash the guts out of it. Break it and shake it till it falls apart.
 
 Contribute bugs and patches. All input is welcome.
 
+To help with the bashing, when you install this dist, you get a command line util
+called argvstruct. It will basically print a Data::Dumper of the structure generated
+by it's arguments
+
+    user@host:~$ argvstruct { Hello=Guys How=[ Are You { Doing=Today } ] }
+    $VAR1 = {
+            'Hello' => 'Guys',
+            'How' => [
+                       'Are',
+                       'You',
+                       {
+                         'Doing' => 'Today'
+                       }
+                     ]
+          };
+
 # 
 
 # TODO
 
-Try to combine with Getopt/MooseX::Getopt, so some parameters could be an ARGV::Struct
+Try to combine with Getopt/MooseX::Getopt, so some parameters could be an ARGV::Struct. The
+rest would be parsed Getopt style.
 
 # CONTRIBUTE
 

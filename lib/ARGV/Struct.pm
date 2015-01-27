@@ -189,6 +189,22 @@ Please bash the guts out of it. Break it and shake it till it falls apart.
 
 Contribute bugs and patches. All input is welcome.
 
+To help with the bashing, when you install this dist, you get a command line util
+called argvstruct. It will basically print a Data::Dumper of the structure generated
+by it's arguments
+
+  user@host:~$ argvstruct { Hello=Guys How=[ Are You { Doing=Today } ] }
+  $VAR1 = {
+          'Hello' => 'Guys',
+          'How' => [
+                     'Are',
+                     'You',
+                     {
+                       'Doing' => 'Today'
+                     }
+                   ]
+        };
+
 =head1 
 
 =head1 TODO
