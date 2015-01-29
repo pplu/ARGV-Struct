@@ -53,7 +53,7 @@ package ARGV::Struct {
       } elsif ($context eq 'list') {
         push @$actual_struct, $token;
       } elsif ($context eq 'hash') {
-        my ($k, $v) = split /=/, $token, 2;
+        my ($k, $v) = ($token, shift @args);
  
         if ($v ne '{' and $v ne '[') {
           die "Repeated $k in hash" if (exists $actual_struct->{ $k });
@@ -138,15 +138,15 @@ Each key/value pair is expressed as
 
 If the value contains spaces, the user can surround the pair with the shell metacharacters
 
-  command { "Key= Value " }
+  command { Key " Value " }
 
 Values can also be objects:
 
-  command { Key={ Nested=Key } }
+  command { Key { Nested Key } }
 
 or lists
 
-  command { Key=[ 1 2 3 ] }
+  command { Key [ 1 2 3 ] }
 
 =head2 Lists
 
@@ -154,7 +154,7 @@ or lists
 
 Each value can be a simple scalar value, or an object or list
 
-  command [ { Name=X } { Name=Y } ]
+  command [ { Name X } { Name Y } ]
   command [ [ 1 2 3 ] [ 4 5 6 ] [ 7 8 9 ] ]
   command [ "First Value" "Second Value" ]
 
@@ -193,7 +193,7 @@ To help with the bashing, when you install this dist, you get a command line uti
 called argvstruct. It will basically print a Data::Dumper of the structure generated
 by it's arguments
 
-  user@host:~$ argvstruct { Hello=Guys How=[ Are You { Doing=Today } ] }
+  user@host:~$ argvstruct { Hello Guys How [ Are You { Doing Today } ] }
   $VAR1 = {
           'Hello' => 'Guys',
           'How' => [

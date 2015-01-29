@@ -4,13 +4,13 @@ use Test::More;
 use ARGV::Struct;
 
 my @tests = (
- { argv => [ qw/{ X=Y }/ ],
+ { argv => [ qw/{ X Y }/ ],
    struct => { X => 'Y' },
  },
- { argv => [ qw/{ X=Y Y={ A=X } }/ ],
+ { argv => [ qw/{ X Y Y { A X } }/ ],
    struct => { X => 'Y', Y => { A => 'X' } }
  },
- { argv => [ qw/{ X=Y Y=[ 1 2 3 ] Z=3 }/ ],
+ { argv => [ qw/{ X Y Y [ 1 2 3 ] Z 3 }/ ],
    struct => { X => 'Y', Y => [ 1, 2, 3 ], Z => 3 }
  },
  { argv => [ qw/[ ]/ ],
@@ -22,14 +22,14 @@ my @tests = (
  { argv => [ qw/[ [ 1 2 3 ] [ 4 5 6 ] [ 7 8 9 ] ]/],
    struct => [ [1,2,3],[4,5,6],[7,8,9]],
  }, 
- { argv => [ qw/[ { Name=X } { Name=Y } ]/],
+ { argv => [ qw/[ { Name X } { Name Y } ]/],
    struct => [ { Name => 'X' }, { Name => 'Y' } ],
  }, 
 
- { argv => [ '{', 'X= Y ', '}' ],
+ { argv => [ '{', 'X', ' Y ', '}' ],
    struct => { X => ' Y ' },
  },
- { argv => [ '{', 'X=Y=Y', '}' ],
+ { argv => [ '{', 'X', 'Y=Y', '}' ],
    struct => { X => 'Y=Y' },
  },
 );
