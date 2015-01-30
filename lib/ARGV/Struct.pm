@@ -16,56 +16,70 @@ package ARGV::Struct {
   sub parse {
     my ($self) = @_;
     my $substruct = $self->_parse_argv($self->args);
-    die "Unclosed structure" if (scalar(@{ $substruct->{ leftover } }));
+    die "Trailing values after structure" if (scalar(@{ $substruct->{ leftover } }));
     return $substruct->{ struct };
+  }
+
+  sub _parse_list {
+    my ($self, @args) = @_;
+    my $list = [];
+    while (my $token = shift @args) {
+      if ($token eq '[') {
+        my $substruct = $self->_parse_list(@args);
+        push @$list, $substruct->{ struct };
+        @args = @{ $substruct->{ leftover } };
+      } elsif($token eq '{') {
+        my $substruct = $self->_parse_hash(@args);
+        push @$list, $substruct->{ struct };
+        @args = @{ $substruct->{ leftover } };
+      } elsif ($token eq ']') {
+        return { struct => $list, leftover => [ @args ] };
+      } else {
+        push @$list, $token;
+      }
+    }
+    die "Unclosed list";
+  };
+
+  sub _parse_hash {
+    my ($self, @args) = @_;
+    my $hash = {};
+    while (my $token = shift @args) {
+      if ($token eq '}') {
+        return { struct => $hash, leftover => [ @args ] };
+      }
+
+      my ($k, $v) = split /=/, $token, 2;
+      die "Repeated $k in hash" if (exists $hash->{ $k });
+
+      die "Key $k doesn't have a value" if (not defined $v);
+      if ($v eq '{'){
+        my $substruct = $self->_parse_hash(@args);
+        $hash->{ $k } = $substruct->{ struct };
+        @args = @{ $substruct->{ leftover } };
+      } elsif ($v eq '[') {
+        my $substruct = $self->_parse_list(@args);
+        $hash->{ $k } = $substruct->{ struct };
+        @args = @{ $substruct->{ leftover } };
+      } else {
+        $hash->{ $k } = $v;
+      }
+    }
+    die "Unclosed hash";
   }
 
   sub _parse_argv {
     my ($self, @args) = @_;
-    my $context;
-    my $actual_struct;
 
     my $token = shift @args;
+
     if ($token eq '[') {
-      $actual_struct = [];
-      $context = 'list';
+      return $self->_parse_list(@args);
     } elsif($token eq '{') {
-      $actual_struct = {};
-      $context = 'hash';
+      return $self->_parse_hash(@args);
     }
 
-    while (my $token = shift @args) {
-#use Data::Dumper;
-#print Dumper(\@args, $actual_struct);
-      if ($token eq '[') {
-        # A new struct is coming!
-        my $substruct = $self->_parse_argv($token, @args);
-        push @$actual_struct, $substruct->{ struct };
-        @args = @{ $substruct->{ leftover } };
-      } elsif($token eq '{') {
-        my $substruct = $self->_parse_argv($token, @args);
-        push @$actual_struct, $substruct->{ struct };
-        @args = @{ $substruct->{ leftover } };
-      } elsif ($token eq ']') {
-        return { struct => $actual_struct, leftover => [ @args ] };
-      } elsif ($token eq '}') {
-        return { struct => $actual_struct, leftover => [ @args ] };
-      } elsif ($context eq 'list') {
-        push @$actual_struct, $token;
-      } elsif ($context eq 'hash') {
-        my ($k, $v) = split /=/, $token, 2;
- 
-        if ($v ne '{' and $v ne '[') {
-          die "Repeated $k in hash" if (exists $actual_struct->{ $k });
-          $actual_struct->{ $k } = $v;
-        } else {
-          my $substruct = $self->_parse_argv($v, @args);
-          $actual_struct->{ $k } = $substruct->{ struct };
-          @args = @{ $substruct->{ leftover } };
-        }
-      }
-    }
-    die "No end token in $context context";
+    die "Expecting { or [";
   }
 }
 
