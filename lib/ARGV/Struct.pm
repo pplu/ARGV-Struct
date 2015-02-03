@@ -79,9 +79,9 @@ package ARGV::Struct {
       return $self->_parse_list(@args);
     } elsif($token eq '{') {
       return $self->_parse_hash(@args);
+    } else {
+      die "Expecting { or [";
     }
-
-    die "Expecting { or [";
   }
 }
 
