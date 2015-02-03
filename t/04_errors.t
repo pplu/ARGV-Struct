@@ -20,10 +20,9 @@ my @tests = (
  { argv => [ qw/{ 3 /],
    error => 'Key 3 doesn\'t',
  }, 
- { argv => [ qw/{ =X }/],
+ { argv => [ qw/{ X }/],
  },
- { argv => [ qw/{ X= }/ ],
-   error => 'X',
+ { argv => [ qw/{ X: }/ ],
  },
 );
 
