@@ -51,6 +51,7 @@ package ARGV::Struct {
 
       my ($k, $v) = ($token, shift @args);
 
+      substr($k,-1,1) = '' if (substr($k,-1,1) eq ':');
       die "Repeated $k in hash" if (exists $hash->{ $k });
 
       die "Key $k doesn't have a value" if (not defined $v);
@@ -149,19 +150,29 @@ The shell is expected to do some work for us, so key/value pairs are separated b
 
 Each key/value pair is expressed as
 
-  Key=Value
+  Key: Value
+
+The colon between Keys and values is optional, so
+
+  Key Value
+
+is the same as above
 
 If the value contains spaces, the user can surround the pair with the shell metacharacters
 
-  command { Key " Value " }
+  command { Key: " Value " }
 
 Values can also be objects:
 
-  command { Key { Nested Key } }
+  command { Key: { Nested Key } }
 
 or lists
 
-  command { Key [ 1 2 3 ] }
+  command { Key: [ 1 2 3 ] }
+
+If you want a key with a colon at the end, just repeat the colon:
+
+  Key:: Value
 
 =head2 Lists
 
@@ -230,6 +241,10 @@ rest would be parsed Getopt style.
 =head1 CONTRIBUTE
 
 The source code and issues are on https://github.com/pplu/ARGV-Struct
+
+=head1 THANKS
+
+Matt S. Trout for suggesting that ARGV::Struct syntax be JSONY compatible
 
 =head1 AUTHOR
 
