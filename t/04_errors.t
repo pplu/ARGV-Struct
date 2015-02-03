@@ -13,6 +13,9 @@ my @tests = (
  },
  { argv => [ qw/[/ ],
    error => 'Unclosed list',
+ },
+ { argv => [ qw/{ X: X X: Y }/ ],
+   error => 'Repeated'
  }, 
  { argv => [ qw/[ A B ] Trail/],
    error => 'Trailing'
