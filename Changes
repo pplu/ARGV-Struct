@@ -1,5 +1,8 @@
 0.01 2015-01-27 00:30:00
  - First version
-0.02 
+0.02 2015-02-04 21:30:00
+ - Breakage: now the arguments are JSONY compatible
+   (thanks to Matt S Trout for the suggestion)
  - Refactor parsing code
- - More tests (testing exceptions)
+ - Better errors
+ - More tests
