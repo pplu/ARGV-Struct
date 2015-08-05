@@ -6,3 +6,5 @@
  - Refactor parsing code
  - Better errors
  - More tests
+0.03 2015-08-05 23:45:00
+ - Compatibility with pre 5.14 Perls (GH Issue #1)
