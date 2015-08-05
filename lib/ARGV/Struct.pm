@@ -1,4 +1,4 @@
-package ARGV::Struct {
+package ARGV::Struct;
   use Moose;
 
   has argv => (
@@ -83,7 +83,6 @@ package ARGV::Struct {
       die "Expecting { or [";
     }
   }
-}
 
 1;
 #################### main pod documentation begin ###################
