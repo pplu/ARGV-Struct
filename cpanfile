@@ -1,4 +1,5 @@
-requires 'Moose';
+requires 'Moo';
+requires 'Types::Standard';
 
 on test => sub {
   requires 'Test::More';
