@@ -1,6 +1,8 @@
 package ARGV::Struct;
   use Moose;
 
+  our $VERSION = '0.04';
+
   has argv => (
     is => 'ro', 
     isa => 'ArrayRef', 
